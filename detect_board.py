@@ -42,7 +42,11 @@ def detect_chess_board(screen):
             # Compute and verify board size to return it
             board_width = abs(top_left_x - top_right_x)
             board_height = abs(top_left_y - bottom_left_y)
-            return corners, board_width
+
+            # Fixing issue of detecting smaller template boards.
+            # Chess.com board size for home screen (Tested with Chrome browser) is 750x750.
+            if board_width == 750:
+                return corners, board_width
 
     return None, None
 
