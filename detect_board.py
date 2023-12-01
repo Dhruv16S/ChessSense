@@ -7,6 +7,7 @@ import tempfile
 from recognize_pieces_positions import recognize_pieces_positions
 
 CONTOUR_AREA_THRESHOLD = 500
+past_notation = None
 
 def detect_chess_board(screen):
     gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
@@ -58,19 +59,23 @@ while True:
     screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
     chessboard_corners, board_size = detect_chess_board(screen)
     if chessboard_corners is not None:
-        print('Chess board detected.')
         # Extract the region within the chessboard corners
         x, y, w, h = cv2.boundingRect(chessboard_corners)
         chessboard_region = screen[y:y+h, x:x+w]
-
         chessboard_region_resized = cv2.resize(chessboard_region, (752, 752))
         temp_file_path = tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
-        cv2.imwrite(temp_file_path, screen)
-        recognize_pieces_positions(template_path=temp_file_path,
+        cv2.imwrite(temp_file_path, chessboard_region_resized)
+        # Display FEN Notation
+        notation = recognize_pieces_positions(template_path=temp_file_path,
                                        TOP_OFF=0,
                                        LEFT_OFF=0)
-            
         os.remove(temp_file_path)
+        print(notation)
+        if notation != past_notation:
+            print(notation)
+            past_notation = notation
+        else:
+            print('No move detected.')
     else:
         print('Chess board not detected.')
-    time.sleep(5)
+    time.sleep(2)

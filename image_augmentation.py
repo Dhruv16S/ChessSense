@@ -19,6 +19,7 @@ subfolders = ["black_pieces", "white_pieces"]
 # Chess.com Neo Board
 white_color = [204, 237, 233]  # Color #e9edcc
 black_color = [84, 153, 84]    # Color #779954
+played_move = [187, 204, 68]   # Color #bbcc44
 
 for subfolder in subfolders:
     input_folder = os.path.join("pieces", subfolder)

@@ -68,8 +68,11 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                             break 
                 if len(confidence_scores) != 0:
                     final_piece_name = piece_names[confidence_scores.index(max(confidence_scores))]
-                    final_piece_name = final_piece_name.replace(".png", "").replace("_white_bg", "")
+                    final_piece_name = final_piece_name.replace(".png", "").replace("_white_bg", "").replace("_played_move", "")
                     chessboard[i][j] = piece_and_symbol[final_piece_name]
 
     fen_notation = board_to_fen(chessboard)
-    print(fen_notation)
+    return fen_notation
+
+# Debugging
+# print(recognize_pieces_positions(template_path="./template_3.png", LEFT_OFF=0, TOP_OFF=0))
