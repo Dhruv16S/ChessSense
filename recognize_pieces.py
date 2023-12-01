@@ -13,7 +13,8 @@ line_distance = template_size // 8
 subfolders = ["white_pieces", "black_pieces"]
 
 # 0 for white, 1 for black
-current_move = 1
+# If the play is from black's perspective, invert the board and change this to 1
+current_move = 0
 
 chessboard = [["." for i in range(8)] for j in range(8)]
 
