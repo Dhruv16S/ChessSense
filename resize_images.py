@@ -1,7 +1,7 @@
 import os
 import cv2
 
-board_size = 750
+board_size = 752
 desired_size = (int(board_size/8), int(board_size/8)) 
 
 resized_folder_path = "./resized_pieces"
@@ -13,7 +13,7 @@ for filename in os.listdir(pieces_folder):
     if filename.endswith(".png") or filename.endswith(".jpg"):
         # Load the piece image
         piece_path = os.path.join(pieces_folder, filename)
-        piece_image = cv2.imread(piece_path, cv2.IMREAD_GRAYSCALE)
+        piece_image = cv2.imread(piece_path, cv2.IMREAD_UNCHANGED)
 
         # Resize the piece image
         resized_piece = cv2.resize(piece_image, desired_size)
