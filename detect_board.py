@@ -3,6 +3,8 @@ import numpy as np
 import pyautogui
 import time
 import os
+import tempfile
+from recognize_pieces_positions import recognize_pieces_positions
 
 CONTOUR_AREA_THRESHOLD = 500
 
@@ -56,10 +58,19 @@ while True:
     screen = cv2.cvtColor(screen, cv2.COLOR_RGB2BGR)
     chessboard_corners, board_size = detect_chess_board(screen)
     if chessboard_corners is not None:
-        for i, corner in enumerate(chessboard_corners):
-            x, y = corner
-            print(f'Chess Board Corner {i + 1}: ({x}, {y})')
-        print(f'Board Size: {board_size}')
+        print('Chess board detected.')
+        # Extract the region within the chessboard corners
+        x, y, w, h = cv2.boundingRect(chessboard_corners)
+        chessboard_region = screen[y:y+h, x:x+w]
+
+        chessboard_region_resized = cv2.resize(chessboard_region, (752, 752))
+        temp_file_path = tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
+        cv2.imwrite(temp_file_path, screen)
+        recognize_pieces_positions(template_path=temp_file_path,
+                                       TOP_OFF=0,
+                                       LEFT_OFF=0)
+            
+        os.remove(temp_file_path)
     else:
         print('Chess board not detected.')
-    time.sleep(0.2)
+    time.sleep(5)
