@@ -9,6 +9,7 @@ from get_best_move import get_best_move
 
 CONTOUR_AREA_THRESHOLD = 500
 past_notation = None
+my_move = True
 
 def detect_chess_board(screen):
     gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
@@ -72,10 +73,14 @@ while True:
                                        LEFT_OFF=0)
         os.remove(temp_file_path)
         if notation != past_notation:
-            print(get_best_move(notation))
-            past_notation = notation
+            if my_move:
+                print(get_best_move(notation))
+                past_notation = notation
+                my_move = False
+                continue
+            if not my_move:
+                my_move = True
         else:
             continue
     else:
         print('Chess board not detected.')
-    time.sleep(1)
