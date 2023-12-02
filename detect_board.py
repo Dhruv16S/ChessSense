@@ -70,7 +70,6 @@ while True:
                                        TOP_OFF=0,
                                        LEFT_OFF=0)
         os.remove(temp_file_path)
-        print(notation)
         if notation != past_notation:
             print(notation)
             past_notation = notation
@@ -78,4 +77,4 @@ while True:
             print('No move detected.')
     else:
         print('Chess board not detected.')
-    time.sleep(2)
+    time.sleep(0.1)

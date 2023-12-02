@@ -1,13 +1,19 @@
-import chess
-
 def board_to_fen(chessboard):
-    board = chess.Board()
-    for i, row in enumerate(chessboard):
-        for j, piece in enumerate(row):
-            if piece != '.':
-                square = chess.square(j, 7 - i) 
-                board.set_piece_at(square, chess.Piece.from_symbol(piece))
+    fen_parts = []
+    for row in chessboard:
+        fen_row = ''
+        empty_count = 0
+        for piece in row:
+            if piece == '.':
+                empty_count += 1
+            else:
+                if empty_count > 0:
+                    fen_row += str(empty_count)
+                    empty_count = 0
+                fen_row += piece
+        if empty_count > 0:
+            fen_row += str(empty_count)
+        fen_parts.append(fen_row)
 
-    fen_notation = board.fen()
-
-    return fen_notation
+    fen = '/'.join(fen_parts)
+    return fen

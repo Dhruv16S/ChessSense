@@ -3,6 +3,14 @@ import numpy as np
 import os
 from fen_notation import board_to_fen
 
+def extract_prominent_colors(cell):
+    flattened_cell = cell.reshape((-1, 3))
+    k = 2
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
+    _, labels, centers = cv2.kmeans(np.float32(flattened_cell), k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+    prominent_colors = np.uint8(centers)
+    return prominent_colors
+
 def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
     template = cv2.imread(template_path)
 
@@ -40,7 +48,13 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                 x2, y2 = (j + 1) * line_distance  + LEFT_OFF, (i + 1) * line_distance  + TOP_OFF
 
                 cell = template[y1:y2, x1:x2]
+                # To fix bugs of repeated pieces.
+                # Check that the size of the cell is equal to line_distance, get the colour of the middle pixel of the cell, get the colour of the top-left corner of the cell.
+                if cell.shape[0] != line_distance:
+                    continue
 
+                # print(extract_prominent_colors(cell))
+                
                 # pieces_folder = f"./resized_pieces/{subfolders[current_move]}"
                 pieces_folder = f"./resized_pieces/{subfolder}"
 
@@ -70,7 +84,8 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                     final_piece_name = piece_names[confidence_scores.index(max(confidence_scores))]
                     final_piece_name = final_piece_name.replace(".png", "").replace("_white_bg", "").replace("_played_move", "")
                     chessboard[i][j] = piece_and_symbol[final_piece_name]
-
+    # Debugging
+    # print(chessboard)
     fen_notation = board_to_fen(chessboard)
     return fen_notation
 
