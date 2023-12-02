@@ -77,4 +77,3 @@ while True:
             print('No move detected.')
     else:
         print('Chess board not detected.')
-    time.sleep(0.1)

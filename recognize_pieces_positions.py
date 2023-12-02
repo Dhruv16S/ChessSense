@@ -4,18 +4,6 @@ import os
 from fen_notation import board_to_fen
 import time
 
-def extract_prominent_colors(cell):
-    flattened_cell = cell.reshape((-1, 3))
-    k = 2
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
-    _, labels, centers = cv2.kmeans(np.float32(flattened_cell), k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-    prominent_colors = np.uint8(centers)
-    # white pieces lie between 120 and 140, else they are black pieces
-    # concluded from define_thresholds.py
-    if np.mean(np.abs(prominent_colors[0] - prominent_colors[1])) >= 120 and np.mean(np.abs(prominent_colors[0] - prominent_colors[1])) <= 140:
-        return "white"
-    return "black"
-
 def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
     template = cv2.imread(template_path)
 
@@ -30,6 +18,7 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
     current_move = 0
 
     chessboard = [["." for i in range(8)] for j in range(8)]
+    chessboard_scores = [[float("-inf") for i in range(8)] for j in range(8)]
 
     piece_and_symbol = {
         "white_pawn" : "P",
@@ -57,7 +46,6 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                 # Check that the size of the cell is equal to line_distance, get the colour of the middle pixel of the cell, get the colour of the top-left corner of the cell.
                 if cell.shape[0] != line_distance:
                     continue
-                probable_piece = extract_prominent_colors(cell)
                 # pieces_folder = f"./resized_pieces/{subfolders[current_move]}"
                 pieces_folder = f"./resized_pieces/{subfolder}"
 
@@ -82,11 +70,15 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                         for loc in zip(*locations[::-1]):
                             piece_names.append(piece_file)
                             confidence_scores.append(result[loc[1], loc[0]])
-                            break 
+                            break
+
                 if len(confidence_scores) != 0:
                     final_piece_name = piece_names[confidence_scores.index(max(confidence_scores))]
                     final_piece_name = final_piece_name.replace(".png", "").replace("_white_bg", "").replace("_played_move", "")
-                    chessboard[i][j] = piece_and_symbol[final_piece_name]
+                    if max(confidence_scores) > chessboard_scores[i][j]:
+                        chessboard[i][j] = piece_and_symbol[final_piece_name]
+                        chessboard_scores[i][j] = max(confidence_scores)
+
     # Debugging
     # print(chessboard)
     fen_notation = board_to_fen(chessboard)
