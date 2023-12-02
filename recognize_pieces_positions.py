@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 from fen_notation import board_to_fen
+import time
 
 def extract_prominent_colors(cell):
     flattened_cell = cell.reshape((-1, 3))
@@ -9,7 +10,11 @@ def extract_prominent_colors(cell):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
     _, labels, centers = cv2.kmeans(np.float32(flattened_cell), k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
     prominent_colors = np.uint8(centers)
-    return prominent_colors
+    # white pieces lie between 120 and 140, else they are black pieces
+    # concluded from define_thresholds.py
+    if np.mean(np.abs(prominent_colors[0] - prominent_colors[1])) >= 120 and np.mean(np.abs(prominent_colors[0] - prominent_colors[1])) <= 140:
+        return "white"
+    return "black"
 
 def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
     template = cv2.imread(template_path)
@@ -52,9 +57,7 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
                 # Check that the size of the cell is equal to line_distance, get the colour of the middle pixel of the cell, get the colour of the top-left corner of the cell.
                 if cell.shape[0] != line_distance:
                     continue
-
-                # print(extract_prominent_colors(cell))
-                
+                probable_piece = extract_prominent_colors(cell)
                 # pieces_folder = f"./resized_pieces/{subfolders[current_move]}"
                 pieces_folder = f"./resized_pieces/{subfolder}"
 
