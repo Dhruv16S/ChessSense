@@ -5,6 +5,7 @@ import time
 import os
 import tempfile
 from recognize_pieces_positions import recognize_pieces_positions
+from get_best_move import get_best_move
 
 CONTOUR_AREA_THRESHOLD = 500
 past_notation = None
@@ -48,7 +49,7 @@ def detect_chess_board(screen):
 
             # Fixing issue of detecting smaller template boards.
             # Chess.com board size for home screen (Tested with Chrome browser) is 750x750.
-            if board_width == 750:
+            if board_width >= 750 or board_width <= 755:
                 return corners, board_width
 
     return None, None
@@ -71,9 +72,10 @@ while True:
                                        LEFT_OFF=0)
         os.remove(temp_file_path)
         if notation != past_notation:
-            print(notation)
+            print(get_best_move(notation))
             past_notation = notation
         else:
-            print('No move detected.')
+            continue
     else:
         print('Chess board not detected.')
+    time.sleep(1)
