@@ -1,15 +1,15 @@
 import cv2
 import numpy as np
 import pyautogui
-import time
 import os
 import tempfile
 from recognize_pieces_positions import recognize_pieces_positions
 from get_best_move import get_best_move
+import time
 
 CONTOUR_AREA_THRESHOLD = 500
 past_notation = None
-my_move = True
+my_move_count = 0
 
 def detect_chess_board(screen):
     gray = cv2.cvtColor(screen, cv2.COLOR_BGR2GRAY)
@@ -36,7 +36,6 @@ def detect_chess_board(screen):
         bottom_left_x, bottom_left_y = bottom_left
         bottom_right_x, bottom_right_y = bottom_right
         top_right_x, top_right_y = top_right
-
         # Difference of x and y coordinates of the corners should be within 2 pixels
         if abs(top_left_x - bottom_left_x) <= 2 and abs(top_right_x - bottom_right_x) <= 2 and abs(top_left_y - top_right_y) <= 2 and abs(bottom_left_y - bottom_right_y) <= 2:
             if len(os.listdir('./processed')) == 0:
@@ -73,14 +72,10 @@ while True:
                                        LEFT_OFF=0)
         os.remove(temp_file_path)
         if notation != past_notation:
-            if my_move:
-                print(get_best_move(notation))
+            if my_move_count % 2 == 0:
+                move_to_play = get_best_move(notation)
                 past_notation = notation
-                my_move = False
-                continue
-            if not my_move:
-                my_move = True
-        else:
-            continue
+            my_move_count += 1
     else:
-        print('Chess board not detected.')
+        move_to_play = 'Chess board not detected.'
+    print(move_to_play)
