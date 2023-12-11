@@ -1,8 +1,10 @@
 import cv2
 import numpy as np
 import os
-from fen_notation import board_to_fen
+from fen_notation import FenNotation
 import time
+
+fen_obj = FenNotation()
 
 def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
     template = cv2.imread(template_path)
@@ -81,7 +83,7 @@ def recognize_pieces_positions(template_path, LEFT_OFF, TOP_OFF):
 
     # Debugging
     # print(chessboard)
-    fen_notation = board_to_fen(chessboard)
+    fen_notation = fen_obj.board_to_fen(chessboard)
     return fen_notation
 
 # Debugging
