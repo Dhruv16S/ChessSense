@@ -1,6 +1,12 @@
 # ChessSense
  ChessSense is a chessboard recognition tool that automates piece detection from images captured from the screen in real-time. With computer vision, it accurately identifies chessboard layouts and piece positions and generates a FEN notation of the current position to recommend the next best move.
 
+https://github.com/Dhruv16S/ChessSense/assets/79364881/09ca4874-2555-4dd6-8c2a-8693d0d09168
+
+### Game analysis (Francis Bot - 2300)
+
+![Game Review for Francis Bot (2300)](https://github.com/Dhruv16S/ChessSense/assets/79364881/4db423ef-b709-437f-937d-cbcaca5189c6)
+
 ## 1. Introduction
 
 For the purposes of this project, all the chess images were taken from [chess.com](https://www.chess.com/), more particularly the Neo pieces and the Green board configuration. Therefore, prior to using the application configure the corresponding settings.
