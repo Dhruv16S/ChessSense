@@ -1,4 +1,5 @@
-python-chess==1.999blinker==1.7.0
+python-chess==1.999
+blinker==1.7.0
 chess==1.10.0
 click==8.1.7
 colorama==0.4.6
